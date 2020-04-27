@@ -1,0 +1,93 @@
+<div class="hidden">
+<span id="kanji" class="hidden">{{Kanji}}</span>
+<ruby>
+<rb>{{Kanji}}</rb><rp>《</rp>
+<rt  id="hiragana">{{Hiragana}}</rt><rp>》</rp>
+</ruby>
+</div>
+
+<div id="output"></div>
+
+<div class="english">
+{{Translation}}
+<br>
+<a class="small">{{Hiragana}}</a>
+<span id="debug" class="hidden"></span>
+</div>
+
+<script>
+//variables to work with
+var kanji = document.getElementById("kanji").innerHTML;
+var hiragana = document.getElementById("hiragana").innerHTML;
+var positions = [];
+
+var lastpos = 0; //ignore this thing, I just need global variable
+
+//structure lookup
+//no furigana -> returns hiragana version position
+//kanji -> returns -1
+for (var i = 0; i < kanji.length; i++){
+	positions.push( hiragana.search(kanji.charAt(i)) );
+	//console.log("Search result for " + kanji.charAt(i) + " is " + hiragana.search(kanji.charAt(i)));
+}
+
+//console.log("Looking up completed with these results " + positions);
+
+//ruby generating
+var output = "<ruby>";
+for(var i = 0; i < positions.length; i++){
+	//returns character without furigana, done pretty shitty way
+	if (positions[i] != -1){
+		output += "<rb>" + kanji.charAt(i) + "</rb><rt></rt>";
+		lastpos = i;
+	}
+	//returns kanji with furigana generated, done even more shitty way, really shitty way, please don't laugh at me
+	else{
+		output += "<rb>" + getkanjiwithhiragana(i) + "</rb><rp>《</rp><rt>" + gethiraganaoverkanji(i) + "</rt><rp>》</rp>";
+		i+= kanjilength(i) - 1;
+	}
+}
+
+//output return
+output += "</ruby>";
+//console.log(output);
+document.getElementById("output").innerHTML = output;
+
+//i need all the hiragana over specific kanji set
+function gethiraganaoverkanji(position){
+	
+	var allthehiraganaiwant = "";
+	
+	var cyclesofforloop = Math.abs(positions[kanjilength(position)]-position);　//i don't know why but it works with absolute value
+	if(isNaN(cyclesofforloop)){
+		return hiragana;
+	}
+	
+	for(var i = 0; i < cyclesofforloop;i++){
+		allthehiraganaiwant+=hiragana.charAt(i+position);
+	}
+	return allthehiraganaiwant;
+	
+}
+
+
+//i need all the kanji with furigana
+function getkanjiwithhiragana(position){
+	var allthekanjiiwant = "";
+	for(var i = 0; i < kanjilength(position); i++){
+		allthekanjiiwant += kanji.charAt(i+position)
+	}
+	return allthekanjiiwant;
+}
+
+//gets kanji set length
+//nice recursive function
+function kanjilength(position){
+	if(positions[position] == -1){
+		return 1 + kanjilength(position+1);
+	}else{
+		return 0;
+	}
+}
+
+</script>

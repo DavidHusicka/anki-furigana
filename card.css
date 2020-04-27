@@ -1,0 +1,22 @@
+.card {
+ font-family: KanjiStrokeOrders;
+ font-size: 50px;
+ text-align: center;
+ color: black;
+ background-color: white;
+}
+.english{
+ font-size: 80%;
+}
+.note{
+ font-size: 60%;
+}
+.hidden{
+ display: none;
+}
+.debug{
+  font-size: small;
+}
+.small{
+  font-size: small;
+}
